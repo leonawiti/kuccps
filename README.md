@@ -19,7 +19,7 @@ kuccps/
 
 | File | What it is |
 |---|---|
-| `degree-choices-eligibility-system-draft-2.xlsx` | An Excel prototype: enter KCSE grades, get **cluster points**, and see which degree programmes the learner qualifies for, against cut-off points from 2018 to 2024. About 2,650 programmes. |
+| `degree-choices-eligibility-system-draft-2.xlsx` | An Excel prototype: enter KCSE grades, get **cluster points**, and see which degree programmes the learner qualifies for, against cut-off points from 2018 to 2024. About 2,050 programmes. |
 | `kcse-subject-groups.docx` | The KCSE subjects in their groups, with subject codes. |
 | `kmtc-courses-and-entry-points-2026-27.pdf` | Kenya Medical Training College: training opportunities for the 2026/2027 year (March 2026 pre-service intake), with each course's minimum entry requirements. 2 pages. |
 | `tvet-cluster-document.pdf` | Minimum subject requirements and grades for technical and vocational (TVET) programmes by category and level. 6 pages. |

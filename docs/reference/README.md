@@ -20,9 +20,9 @@ A working Excel prototype of a **degree eligibility checker**. The title says "d
 | Sheet | What it holds |
 |---|---|
 | **POINTS CALCULATIONS** | The calculator. KCSE grades go in for the compulsory subjects (Mathematics, English, Kiswahili), the sciences (Chemistry, Physics, Biology), the humanities (Geography, CRE, History) and the cluster subjects. It turns grades into points (A is 12 down to E at 1), totals them, and works out the cluster points. |
-| **DEGREE CLUSTER** | The programme database, about **2,650 rows**: programme code, institution, programme name, **cut-off points for each year from 2018 to 2024**, and then the calculated columns that compare the learner's cluster points with each programme's cut-off: *Degree Eligibility*, *Not qualified*, *Flexibility* and *Margin*. Programmes are grouped under headings such as "BACHELOR OF ARTS". About 14,600 formulas. |
-| **Subject Combination** | About 2,690 rows: programme code, institution, programme, the 2023 and 2022 cut-offs, and up to four **subject requirements** per programme (many cells are empty in the rows read). |
-| **DEGREE** | **Hidden.** It has the same layout and, in the rows read, the same content as *Subject Combination*; it looks like a leftover copy. |
+| **DEGREE CLUSTER** | The programme database: about **2,050 programmes** (the sheet is about 2,650 rows long, counting the group headings and the calculation cells): programme code, institution, programme name, **cut-off points for each year from 2018 to 2024**, and then the calculated columns that compare the learner's cluster points with each programme's cut-off: *Degree Eligibility*, *Not qualified*, *Flexibility* and *Margin*. Programmes are grouped under headings such as "BACHELOR OF ARTS". About 14,600 formulas. |
+| **Subject Combination** | About **2,080 programmes** (2,687 rows with the headings): programme code, institution, programme, the 2023 and 2022 cut-offs, and up to four **subject requirements** per programme. 85% of programmes (1,780 of 2,084) list at least one subject; about 300 list none. |
+| **DEGREE** | **Hidden.** It is **identical to *Subject Combination***: every one of its 2,687 rows matches (checked cell by cell). It looks like a leftover copy. |
 
 ### How the cluster points are worked out
 
@@ -43,7 +43,8 @@ This has the same shape as the cluster-point formula KUCCPS publishes, but **it 
 ### Things noticed in it (not investigated further; it is not our file)
 
 - **Several of the counting formulas near the top of *DEGREE CLUSTER* look shifted by one row** from one line to the next (`COUNTIF(L4:L2658,...)` then `COUNTIF(L5:L2659,...)`), the usual sign of a formula copied down by accident. The counts they give may be wrong.
-- **The cluster in a programme's cut-off is not always filled in:** many *Subject Combination* rows show no subjects, so eligibility cannot be fully worked out for those programmes from this file alone.
+- **About 300 programmes (15%) have no subject requirements listed** in *Subject Combination*, so eligibility cannot be fully worked out for those programmes from this file alone.
+- **Two sheets hold the same data** (*Subject Combination* and the hidden *DEGREE*), and the programme counts differ slightly between sheets (about 2,050 in *DEGREE CLUSTER*, 2,084 in *Subject Combination*), so the sheets are not perfectly in step.
 - **Cut-off history is uneven:** some programmes show "-" for early years (a programme that did not yet exist, or a missing value; the file does not say which).
 - **A typo:** "COMPULSURY" for "compulsory", on the calculator sheet.
 - **The data's source and date are not written in the workbook.** The cut-offs through 2024 look like KUCCPS's published figures, but nothing in the file says so.
