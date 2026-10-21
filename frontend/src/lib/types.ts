@@ -35,6 +35,7 @@ export interface Meta {
   mean_grade_bands: MeanGradeBand[];
   pathways: { key: PathwayKey; label: string }[];
   bands: BandInfo[];
+  colleges: { kmtc: number; tvet: number };
   catalogue: {
     programmes: number;
     institutions: string[];
@@ -149,6 +150,7 @@ export interface ClassLearnerResult {
   total: number;
   mean_grade: string;
   best_cluster: number | null;
+  colleges_eligible: number | null;
   bands: Record<ListedBand, number>;
   pathways: Record<PathwayKey, number>;
   at_risk: boolean;
@@ -163,6 +165,8 @@ export interface ClassResponse {
     safe_reach: number;
     pathway_reach: Record<PathwayKey, number>;
     at_risk: string[];
+    college_reach: number | null;
+    at_risk_with_college_option: string[];
     subjects: { key: string; name: string; learners: number; mean_points: number }[];
   };
   rejected: { name: string; error: string }[];
@@ -171,4 +175,59 @@ export interface ClassResponse {
 export interface ProgrammesResponse {
   total: number;
   results: Programme[];
+}
+
+export type CollegeProvider = 'kmtc' | 'tvet';
+export type CollegeLevel = 'diploma' | 'certificate' | 'artisan';
+export type CollegeStatus = 'eligible' | 'near' | 'not_eligible';
+
+export interface CollegeRule {
+  subjects: string[]; // subject keys, or ['*'] for any subject
+  grade: string;
+  count: number;
+}
+
+export interface CollegeOption {
+  label: string | null;
+  rules: CollegeRule[];
+}
+
+export type Unmet =
+  | { kind: 'mean'; need: string; have: string }
+  | { kind: 'subject'; alternatives: string[]; min_grade: string; count: number }
+  | { kind: 'overlap' };
+
+export interface CollegeResult {
+  id: string;
+  provider: CollegeProvider;
+  name: string;
+  level: CollegeLevel;
+  category: string | null;
+  section: string | null;
+  audience: string | null;
+  min_mean: string | null;
+  mean_grade: string;
+  status: CollegeStatus;
+  unmet: Unmet[];
+  option: string | null;
+  warnings: string[];
+  options: CollegeOption[];
+  page: number | null;
+  source: string | null;
+  notes: string;
+}
+
+export interface CollegesRequest {
+  grades: Record<string, string>;
+  providers?: CollegeProvider[];
+  levels?: CollegeLevel[];
+  q?: string;
+  limit?: number;
+}
+
+export interface CollegesResponse {
+  learner: LearnerSummary;
+  counts: Record<CollegeStatus, number>;
+  truncated: Record<CollegeStatus, boolean>;
+  results: Record<CollegeStatus, CollegeResult[]>;
 }

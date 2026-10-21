@@ -1,4 +1,4 @@
-import type { Slot, Warning } from './types';
+import type { CollegeRule, Slot, Unmet, Warning } from './types';
 
 export function formatMargin(margin: number | null): string {
   if (margin === null) return '-';
@@ -35,3 +35,30 @@ export function trendOf(cutoffs: Record<string, number>): { direction: 'up' | 'd
   const change = Math.round((cutoffs[years[years.length - 1]] - cutoffs[years[years.length - 2]]) * 1000) / 1000;
   return { direction: change > 0 ? 'up' : change < 0 ? 'down' : 'flat', change };
 }
+
+const joinOr = (items: string[]): string =>
+  items.length <= 1 ? (items[0] ?? '') : `${items.slice(0, -1).join(', ')} or ${items[items.length - 1]}`;
+
+/** One KMTC/TVET requirement in words: "Any 2 of Physics, Chemistry or Mathematics A, at least C-". */
+export function ruleText(rule: CollegeRule, names: Record<string, string>): string {
+  const any = rule.subjects.length === 1 && rule.subjects[0] === '*';
+  if (any) return `${rule.count > 1 ? `Any ${rule.count} subjects` : 'Any subject'}, at least ${rule.grade}`;
+  const list = joinOr(rule.subjects.map((k) => names[k] ?? k));
+  return `${rule.count > 1 ? `Any ${rule.count} of ` : ''}${list}, at least ${rule.grade}`;
+}
+
+export function unmetText(unmet: Unmet, names: Record<string, string>): string {
+  if (unmet.kind === 'mean') return `Needs a mean grade of ${unmet.need}; yours is ${unmet.have}.`;
+  if (unmet.kind === 'subject') {
+    return `Needs ${ruleText({ subjects: unmet.alternatives, grade: unmet.min_grade, count: unmet.count }, names)}.`;
+  }
+  return 'The same subject cannot count for two requirements, and your subjects cannot cover them all together.';
+}
+
+const COLLEGE_WARNINGS: Record<string, string> = {
+  mean_grade_not_stated: 'The source prints no mean grade for this course, so only the subject grades were checked.',
+  incomplete_source: 'The printed requirements for this course look cut off in the source document. Confirm them with KUCCPS.',
+  no_subject_rules_listed: 'The source lists no subject requirements for this course, only the mean grade.',
+};
+
+export const collegeWarningText = (flag: string): string => COLLEGE_WARNINGS[flag] ?? flag;

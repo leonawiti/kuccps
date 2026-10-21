@@ -35,7 +35,7 @@ export interface AppState {
   go: (tab: Tab) => void;
 }
 
-export type Tab = 'check' | 'choices' | 'class' | 'report' | 'about';
+export type Tab = 'check' | 'choices' | 'colleges' | 'class' | 'report' | 'about';
 
 export const AppContext = createContext<AppState | null>(null);
 

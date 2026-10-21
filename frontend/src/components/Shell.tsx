@@ -5,6 +5,7 @@ import type { Tab } from '../state/app-context';
 export const TABS: { key: Tab; label: string }[] = [
   { key: 'check', label: 'Check my courses' },
   { key: 'choices', label: 'My four choices' },
+  { key: 'colleges', label: 'Colleges and TVET' },
   { key: 'class', label: 'Class analysis' },
   { key: 'report', label: 'Report' },
   { key: 'about', label: 'About' },

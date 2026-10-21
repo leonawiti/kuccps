@@ -61,6 +61,48 @@ describe('class analysis', () => {
     expect(support).toHaveTextContent('Otieno');
   });
 
+  it('shows how many learners have a KMTC or TVET route, and which of those needing support do', async () => {
+    fakeServer({ ...metaHandler, 'POST /api/class/': () => classResponse() });
+    const user = await open();
+    await paste(user, SHEET);
+    await user.click(screen.getByRole('button', { name: 'Analyse the class' }));
+    await screen.findByRole('heading', { name: 'Class results' });
+
+    expect(screen.getByText('With a college route').parentElement).toHaveTextContent('100%');
+    const support = screen.getByRole('region', { name: 'Learners who need support' });
+    expect(support).toHaveTextContent('1 of 1 can still enter at least one KMTC or TVET course.');
+    expect(support).toHaveTextContent('Otieno: eligible for 14 KMTC or TVET courses');
+  });
+
+  it('says plainly when a learner needing support has no college route either', async () => {
+    const base = classResponse();
+    fakeServer({ ...metaHandler, 'POST /api/class/': () => classResponse({
+      learners: base.learners.map((l) => (l.name === 'Otieno' ? { ...l, colleges_eligible: 0 } : l)),
+      cohort: { ...base.cohort, at_risk_with_college_option: [], college_reach: 0.5 },
+    }) });
+    const user = await open();
+    await paste(user, SHEET);
+    await user.click(screen.getByRole('button', { name: 'Analyse the class' }));
+    const support = await screen.findByRole('region', { name: 'Learners who need support' });
+    expect(support).toHaveTextContent('0 of 1 can still enter');
+    expect(support).toHaveTextContent('Otieno: no KMTC or TVET course on current results');
+  });
+
+  it('leaves the college figures out when the server did not work them out', async () => {
+    const base = classResponse();
+    fakeServer({ ...metaHandler, 'POST /api/class/': () => classResponse({
+      learners: base.learners.map((l) => ({ ...l, colleges_eligible: null })),
+      cohort: { ...base.cohort, college_reach: null, at_risk_with_college_option: [] },
+    }) });
+    const user = await open();
+    await paste(user, SHEET);
+    await user.click(screen.getByRole('button', { name: 'Analyse the class' }));
+    const support = await screen.findByRole('region', { name: 'Learners who need support' });
+    expect(screen.queryByText('With a college route')).not.toBeInTheDocument();
+    expect(support).toHaveTextContent('Consider TVET and KMTC pathways');
+    expect(support).not.toHaveTextContent('KMTC or TVET course');
+  });
+
   it('sorts the learner table when a column heading is chosen', async () => {
     fakeServer({ ...metaHandler, 'POST /api/class/': () => classResponse() });
     const user = await open();

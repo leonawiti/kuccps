@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { ApiError, analyseChoices, checkEligibility } from '../lib/api';
+import { ApiError, analyseChoices, checkColleges, checkEligibility } from '../lib/api';
 import { formatMargin, formatPoints } from '../lib/format';
-import type { ChoicesResponse, EligibilityResponse, Evaluation, ListedBand, PathwayKey } from '../lib/types';
+import type { ChoicesResponse, CollegesResponse, EligibilityResponse, Evaluation, ListedBand, PathwayKey } from '../lib/types';
 import { useApp } from '../state/app-context';
 import { BandBadge, Notice, PageTitle, Spinner } from './ui';
 
@@ -9,11 +9,13 @@ interface ReportData {
   main: EligibilityResponse;
   byPathway: Record<PathwayKey, EligibilityResponse>;
   choices: ChoicesResponse | null;
+  colleges: CollegesResponse;
   date: string;
 }
 
 const TOP = 6;
 const PER_FAMILY = 3;
+const COLLEGES_SHOWN = 8;
 
 function CourseLine({ r }: { r: Evaluation }) {
   return (
@@ -49,11 +51,12 @@ export function Report() {
       checkEligibility({ grades: g, mode, limit: TOP }),
       Promise.all(pathwayKeys.map((p) => checkEligibility({ grades: g, mode, pathways: [p], limit: PER_FAMILY }))),
       codes.length ? analyseChoices({ grades: g, mode, choices: codes }) : Promise.resolve(null),
+      checkColleges({ grades: g, limit: COLLEGES_SHOWN }),
     ])
-      .then(([main, per, ch]) => {
+      .then(([main, per, ch, colleges]) => {
         if (mine !== ticket.current) return;
         const byPathway = Object.fromEntries(pathwayKeys.map((p, i) => [p, per[i]])) as Record<PathwayKey, EligibilityResponse>;
-        setData({ main, byPathway, choices: ch, date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) });
+        setData({ main, byPathway, choices: ch, colleges, date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) });
       })
       .catch((e: unknown) => {
         if (mine !== ticket.current) return;
@@ -206,6 +209,26 @@ export function Report() {
                 </div>
               ) : null;
             })}
+          </section>
+
+          <section className="report-section card" aria-labelledby="r-colleges">
+            <h3 id="r-colleges" className="font-display text-lg font-semibold">KMTC and TVET options</h3>
+            <p className="mb-2 text-sm text-muted">
+              Eligible for {data.colleges.counts.eligible} of {data.colleges.counts.eligible + data.colleges.counts.near + data.colleges.counts.not_eligible} college
+              programmes{data.colleges.counts.near > 0 ? `, with ${data.colleges.counts.near} more one grade short` : ''}. These have no cut-off points.
+            </p>
+            {data.colleges.results.eligible.length === 0 ? (
+              <p className="text-sm text-muted">No college programme is met in full on these results.</p>
+            ) : (
+              <ul className="divide-y divide-line">
+                {data.colleges.results.eligible.map((c) => (
+                  <li key={c.id} className="py-1 text-sm">
+                    <span className="font-semibold">{c.name}</span>
+                    <span className="block text-muted">{c.provider === 'kmtc' ? 'KMTC' : 'TVET'} &middot; {c.level}{c.min_mean && c.min_mean !== 'E' ? ` · minimum mean grade ${c.min_mean}` : ''}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
 
           <section className="report-section card text-sm" aria-labelledby="r-notes">

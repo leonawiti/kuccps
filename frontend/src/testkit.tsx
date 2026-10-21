@@ -1,7 +1,7 @@
 // Fixtures and a pretend server for component tests. Not part of the app bundle.
 import { vi } from 'vitest';
 import type {
-  ChoicesResponse, ClassResponse, EligibilityResponse, Evaluation, ListedBand, Meta, Programme,
+  ChoicesResponse, ClassResponse, CollegeResult, CollegeStatus, CollegesResponse, EligibilityResponse, Evaluation, ListedBand, Meta, Programme,
 } from './lib/types';
 
 const GRADE_LIST = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'E'];
@@ -14,6 +14,7 @@ export const META: Meta = {
     { key: 'MAT B', number: '122', name: 'Mathematics (Alternative B)', group: 1 },
     { key: 'BIO', number: '231', name: 'Biology', group: 2 },
     { key: 'CHE', number: '233', name: 'Chemistry', group: 2 },
+    { key: 'BSC', number: '235', name: 'Biological Sciences', group: 2 },
     { key: 'PHY', number: '232', name: 'Physics', group: 2 },
     { key: 'GEO', number: '312', name: 'Geography', group: 3 },
     { key: 'CRE', number: '313', name: 'Christian Religious Education', group: 3 },
@@ -36,6 +37,7 @@ export const META: Meta = {
     { key: 'stretch', label: 'Stretch', description: 'Just below the cut-off.' },
     { key: 'excluded', label: 'Excluded', description: 'Out of reach.' },
   ],
+  colleges: { kmtc: 36, tvet: 70 },
   catalogue: { programmes: 5, institutions: ['Alpha University', 'Beta University'], source: 'test.xlsx', report: null },
 };
 
@@ -81,14 +83,15 @@ export function choicesResponse(choices: Evaluation[], advice: { code: string; m
 export function classResponse(over: Partial<ClassResponse> = {}): ClassResponse {
   return {
     learners: [
-      { name: 'Amina', total: 70, mean_grade: 'B+', best_cluster: 41.2, bands: { best_fit: 3, safe: 90, stretch: 4, excluded: 20, no_data: 1 },
+      { name: 'Amina', total: 70, mean_grade: 'B+', best_cluster: 41.2, colleges_eligible: 60, bands: { best_fit: 3, safe: 90, stretch: 4, excluded: 20, no_data: 1 },
         pathways: { stem: 50, social: 40, arts_sports: 3 }, at_risk: false },
-      { name: 'Otieno', total: 30, mean_grade: 'D+', best_cluster: 20.1, bands: { best_fit: 0, safe: 0, stretch: 0, excluded: 118, no_data: 0 },
+      { name: 'Otieno', total: 30, mean_grade: 'D+', best_cluster: 20.1, colleges_eligible: 14, bands: { best_fit: 0, safe: 0, stretch: 0, excluded: 118, no_data: 0 },
         pathways: { stem: 0, social: 0, arts_sports: 0 }, at_risk: true },
     ],
     cohort: {
       learners: 2, mean_total: 50, mean_grades: { 'B+': 1, 'D+': 1 }, safe_reach: 0.5,
       pathway_reach: { stem: 0.5, social: 0.5, arts_sports: 0.5 }, at_risk: ['Otieno'],
+      college_reach: 1, at_risk_with_college_option: ['Otieno'],
       subjects: [{ key: 'ENG', name: 'English', learners: 2, mean_points: 7.5 }],
     },
     rejected: [], ...over,
@@ -131,3 +134,23 @@ export function seedChoices(list: { code: string; name: string; institution: str
 
 /** The one endpoint every screen needs. */
 export const metaHandler = { 'GET /api/meta/': () => META };
+
+export function collegeResult(over: Partial<CollegeResult> = {}): CollegeResult {
+  return {
+    id: 'kmtc-28', provider: 'kmtc', name: 'Diploma in Pharmacy', level: 'diploma', category: 'Health', section: null, audience: null,
+    min_mean: 'C', mean_grade: 'B', status: 'eligible', unmet: [], option: null, warnings: [],
+    options: [{ label: null, rules: [{ subjects: ['BIO', 'BSC'], grade: 'C', count: 1 }] }],
+    page: 2, source: 'Mean Grade C, C in English or Kiswahili', notes: '', ...over,
+  };
+}
+
+export function collegesResponse(groups: Partial<Record<CollegeStatus, CollegeResult[]>> = {}, over: Partial<CollegesResponse> = {}): CollegesResponse {
+  const full: Record<CollegeStatus, CollegeResult[]> = { eligible: [], near: [], not_eligible: [], ...groups };
+  const keys = Object.keys(full) as CollegeStatus[];
+  return {
+    learner: { total: 65, mean_grade: 'B', points: {}, subjects: 7 },
+    counts: Object.fromEntries(keys.map((k) => [k, full[k].length])) as Record<CollegeStatus, number>,
+    truncated: Object.fromEntries(keys.map((k) => [k, false])) as Record<CollegeStatus, boolean>,
+    results: full, ...over,
+  };
+}

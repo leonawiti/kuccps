@@ -55,7 +55,11 @@ export function About() {
           <li>The subjects listed for each programme are minimum requirements. KUCCPS's own cluster-subject lists may differ, and where a programme lists fewer than four, your best remaining subjects fill the rest.</li>
           <li>The mean-grade table is the usual KNEC conversion but has not been checked against KNEC's own publication.</li>
           <li>Career families (STEM, Social Sciences and Humanities, Arts and Sports Science, after the CBE pathways) are assigned from programme names by simple rules. Treat them as a guide.</li>
-          <li>Diploma, certificate, TVET and KMTC programmes are not included yet.</li>
+          <li>
+            KMTC ({meta.colleges.kmtc} courses) and TVET ({meta.colleges.tvet} programmes) have no cut-off points. They are checked on your mean grade and subject
+            grades alone. They were typed in by hand from the two source documents, with the page and printed text shown on each course, and a few have notes
+            where the source is unclear or cut off.
+          </li>
         </ul>
       </section>
 

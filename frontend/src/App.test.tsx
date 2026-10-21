@@ -22,7 +22,7 @@ describe('starting up', () => {
     fakeServer(metaHandler);
     render(<App />);
     expect(await screen.findByRole('heading', { name: 'Check my courses' })).toBeInTheDocument();
-    for (const name of ['Check my courses', 'My four choices', 'Class analysis', 'Report', 'About']) {
+    for (const name of ['Check my courses', 'My four choices', 'Colleges and TVET', 'Class analysis', 'Report', 'About']) {
       expect(screen.getByRole('button', { name })).toBeInTheDocument();
     }
     expect(screen.getByRole('button', { name: 'Check my courses' })).toHaveAttribute('aria-current', 'page');
@@ -134,5 +134,6 @@ describe('about', () => {
     expect(await screen.findByText(/draft workbook of 5 degree programmes at 2 institutions/)).toBeInTheDocument();
     expect(screen.getByText(/not a live KUCCPS feed/)).toBeInTheDocument();
     expect(screen.getByText(/Grades score from A = 12 down to E = 1/)).toBeInTheDocument();
+    expect(screen.getByText(/KMTC \(36 courses\) and TVET \(70 programmes\) have no cut-off points/)).toBeInTheDocument();
   });
 });

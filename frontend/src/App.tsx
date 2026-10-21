@@ -3,6 +3,7 @@ import { About } from './components/About';
 import { Check } from './components/Check';
 import { Choices } from './components/Choices';
 import { ClassView } from './components/ClassView';
+import { Colleges } from './components/Colleges';
 import { Report } from './components/Report';
 import { Shell, TABS } from './components/Shell';
 import { Notice, Spinner } from './components/ui';
@@ -73,6 +74,7 @@ function Loaded({ meta }: { meta: Meta }) {
       <Shell tab={tab} onTab={go} theme={theme} onTheme={cycleTheme} choiceCount={choices.length}>
         {tab === 'check' ? <Check /> : null}
         {tab === 'choices' ? <Choices /> : null}
+        {tab === 'colleges' ? <Colleges /> : null}
         {tab === 'class' ? <ClassView /> : null}
         {tab === 'report' ? <Report /> : null}
         {tab === 'about' ? <About /> : null}

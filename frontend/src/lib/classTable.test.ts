@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { learnersToCsv, sortLearners } from './classTable';
 import type { ClassLearnerResult } from './types';
 
-const L = (name: string, total: number, safe: number, best_cluster: number | null, at_risk = false): ClassLearnerResult => ({
-  name, total, mean_grade: 'B', best_cluster,
+const L = (name: string, total: number, safe: number, best_cluster: number | null, at_risk = false, colleges: number | null = 5): ClassLearnerResult => ({
+  name, total, mean_grade: 'B', best_cluster, colleges_eligible: colleges,
   bands: { best_fit: 1, safe, stretch: 2, excluded: 3, no_data: 0 },
   pathways: { stem: 4, social: 5, arts_sports: 6 }, at_risk,
 });
@@ -42,10 +42,14 @@ describe('sortLearners', () => {
 describe('learnersToCsv', () => {
   it('has a header and one line per learner', () => {
     const lines = learnersToCsv(LIST).split('\n');
-    expect(lines[0]).toBe('Name,Total (best 7),Mean grade,Best cluster points,Best fit,Safe,Stretch,Excluded,STEM reachable,Social Sciences reachable,Arts and Sports reachable,At risk');
+    expect(lines[0]).toBe('Name,Total (best 7),Mean grade,Best cluster points,Best fit,Safe,Stretch,Excluded,STEM reachable,Social Sciences reachable,Arts and Sports reachable,KMTC and TVET eligible,At risk');
     expect(lines).toHaveLength(4);
-    expect(lines[1]).toBe('Wanjiru,60,B,30.5,1,10,2,3,4,5,6,No');
-    expect(lines[3]).toBe('Otieno,30,B,,1,0,2,3,4,5,6,Yes');
+    expect(lines[1]).toBe('Wanjiru,60,B,30.5,1,10,2,3,4,5,6,5,No');
+    expect(lines[3]).toBe('Otieno,30,B,,1,0,2,3,4,5,6,5,Yes');
+  });
+  it('leaves the college count empty when it was not worked out', () => {
+    const csv = learnersToCsv([L('Zed', 50, 1, 20, false, null)]);
+    expect(csv.split(/\r?\n/)[1]).toBe('Zed,50,B,20,1,1,2,3,4,5,6,,No');
   });
   it('quotes names with commas or quotes so a spreadsheet reads them back', () => {
     const csv = learnersToCsv([L('Achieng, "Ann"', 50, 1, 20)]);

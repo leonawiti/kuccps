@@ -5,7 +5,7 @@ The web app: React 19, TypeScript, Vite, Tailwind, tested with Vitest and Testin
 ```
 npm install
 npm run dev          # http://localhost:5173, forwards /api to http://localhost:8000
-npm test             # 150 tests
+npm test             # 184 tests
 npm run build        # type check, then a production build in dist/
 ```
 
@@ -15,8 +15,9 @@ npm run build        # type check, then a production build in dist/
 |---|---|
 | **Check my courses** | Enter KCSE grades (live total and mean grade), choose flexible or classic bands, search and filter by university and career family, set preferences, and see Best fit / Safe / Stretch / Excluded / No cut-off data with the numbers behind each programme. |
 | **My four choices** | Pick up to four programmes (from the results or by search), see each one's band, reorder them, and get advice on the mix. |
-| **Class analysis** | Paste or upload a mark sheet (CSV; a template can be downloaded) and see the grade spread, reach by career family, subject averages, who needs support and a sortable table that can be downloaded or printed. Nothing is stored. |
-| **Report** | A printable learner report: results, the four choices, best fit, safe and stretch courses, career families, and how to read it. "Print or save as PDF" uses the browser's print window. |
+| **Colleges and TVET** | The 36 KMTC courses and 70 TVET programmes sorted into eligible, near miss and not eligible, with filters, what each course asks for, the exact shortfalls, and the source page and printed text. |
+| **Class analysis** | Paste or upload a mark sheet (CSV; a template can be downloaded) and see the grade spread, reach by career family, subject averages, who needs support (and whether they have a KMTC or TVET route) and a sortable table that can be downloaded or printed. Nothing is stored. |
+| **Report** | A printable learner report: results, the four choices, best fit, safe and stretch courses, career families, KMTC and TVET options, and how to read it. "Print or save as PDF" uses the browser's print window. |
 | **About** | How the calculation works, the bands, privacy, and the limits of the data. |
 
 ## Notes on how it is built

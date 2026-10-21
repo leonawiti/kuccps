@@ -34,11 +34,11 @@ function cell(value: string | number | null): string {
 export function learnersToCsv(list: ClassLearnerResult[]): string {
   const header = [
     'Name', 'Total (best 7)', 'Mean grade', 'Best cluster points', 'Best fit', 'Safe', 'Stretch', 'Excluded',
-    'STEM reachable', 'Social Sciences reachable', 'Arts and Sports reachable', 'At risk',
+    'STEM reachable', 'Social Sciences reachable', 'Arts and Sports reachable', 'KMTC and TVET eligible', 'At risk',
   ];
   const rows = list.map((l) => [
     l.name, l.total, l.mean_grade, l.best_cluster, l.bands.best_fit, l.bands.safe, l.bands.stretch, l.bands.excluded,
-    l.pathways.stem, l.pathways.social, l.pathways.arts_sports, l.at_risk ? 'Yes' : 'No',
+    l.pathways.stem, l.pathways.social, l.pathways.arts_sports, l.colleges_eligible, l.at_risk ? 'Yes' : 'No',
   ].map(cell).join(','));
   return [header.join(','), ...rows].join('\n');
 }

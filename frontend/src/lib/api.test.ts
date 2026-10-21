@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ApiError, analyseChoices, analyseClass, checkEligibility, getMeta, searchProgrammes } from './api';
+import { ApiError, analyseChoices, analyseClass, checkColleges, checkEligibility, getMeta, searchProgrammes } from './api';
 
 function stubFetch(status: number, body: unknown) {
   const fn = vi.fn(async () => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } }));
@@ -31,6 +31,14 @@ describe('api client', () => {
     await analyseChoices({ grades: {}, mode: 'classic', choices: ['1'] });
     await analyseClass({ learners: [], mode: 'classic' });
     expect(fn.mock.calls.map((c) => (c as unknown as [string])[0])).toEqual(['/api/choices/', '/api/class/']);
+  });
+
+  it('posts college requests to /api/colleges/', async () => {
+    const fn = stubFetch(200, {});
+    await checkColleges({ grades: { ENG: 'A' }, providers: ['kmtc'] });
+    const [url, init] = fn.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe('/api/colleges/');
+    expect(JSON.parse(init.body as string)).toEqual({ grades: { ENG: 'A' }, providers: ['kmtc'] });
   });
 
   it('puts search terms in the query string, encoded, and leaves empty ones out', async () => {

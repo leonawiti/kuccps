@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatMargin, formatPercent, formatPoints, slotText, trendOf, warningText } from './format';
+import { collegeWarningText, formatMargin, formatPercent, formatPoints, ruleText, slotText, trendOf, unmetText, warningText } from './format';
 
 const NAMES = { BIO: 'Biology', CHE: 'Chemistry', 'MAT A': 'Mathematics A', PHY: 'Physics' };
 
@@ -59,5 +59,48 @@ describe('trendOf', () => {
   it('is null with fewer than two years of data', () => {
     expect(trendOf({ '2024': 30 })).toBeNull();
     expect(trendOf({})).toBeNull();
+  });
+});
+
+describe('ruleText', () => {
+  const names = { BIO: 'Biology', BSC: 'Biological Sciences', PHY: 'Physics', CHE: 'Chemistry', 'MAT A': 'Mathematics A' };
+  it('names one subject, or lists alternatives with "or"', () => {
+    expect(ruleText({ subjects: ['BIO'], grade: 'C', count: 1 }, names)).toBe('Biology, at least C');
+    expect(ruleText({ subjects: ['BIO', 'BSC'], grade: 'C', count: 1 }, names)).toBe('Biology or Biological Sciences, at least C');
+    expect(ruleText({ subjects: ['PHY', 'CHE', 'MAT A'], grade: 'C-', count: 1 }, names)).toBe('Physics, Chemistry or Mathematics A, at least C-');
+  });
+  it('says "any two of" when more than one different subject is needed', () => {
+    expect(ruleText({ subjects: ['PHY', 'CHE', 'MAT A'], grade: 'C-', count: 2 }, names)).toBe('Any 2 of Physics, Chemistry or Mathematics A, at least C-');
+  });
+  it('reads "any subject" for the wildcard', () => {
+    expect(ruleText({ subjects: ['*'], grade: 'C+', count: 2 }, names)).toBe('Any 2 subjects, at least C+');
+    expect(ruleText({ subjects: ['*'], grade: 'C+', count: 1 }, names)).toBe('Any subject, at least C+');
+  });
+  it('falls back to the key for an unknown subject', () => {
+    expect(ruleText({ subjects: ['XYZ'], grade: 'D', count: 1 }, names)).toBe('XYZ, at least D');
+  });
+});
+
+describe('unmetText', () => {
+  const names = { CHE: 'Chemistry' };
+  it('says how the mean grade falls short', () => {
+    expect(unmetText({ kind: 'mean', need: 'C', have: 'D+' }, names)).toBe('Needs a mean grade of C; yours is D+.');
+  });
+  it('says which subject requirement is not met', () => {
+    expect(unmetText({ kind: 'subject', alternatives: ['CHE'], min_grade: 'B', count: 1 }, names)).toBe('Needs Chemistry, at least B.');
+  });
+  it('explains that one subject cannot count twice', () => {
+    expect(unmetText({ kind: 'overlap' }, names)).toMatch(/same subject cannot count/);
+  });
+});
+
+describe('collegeWarningText', () => {
+  it('explains each flag a college entry can carry', () => {
+    expect(collegeWarningText('mean_grade_not_stated')).toMatch(/no mean grade/i);
+    expect(collegeWarningText('incomplete_source')).toMatch(/cut off/i);
+    expect(collegeWarningText('no_subject_rules_listed')).toMatch(/no subject requirements/i);
+  });
+  it('shows an unknown flag as it is rather than hiding it', () => {
+    expect(collegeWarningText('something_new')).toBe('something_new');
   });
 });

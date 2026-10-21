@@ -3,6 +3,8 @@ import type {
   ChoicesResponse,
   ClassLearnerInput,
   ClassResponse,
+  CollegesRequest,
+  CollegesResponse,
   EligibilityRequest,
   EligibilityResponse,
   Meta,
@@ -73,3 +75,4 @@ export const checkEligibility = (body: EligibilityRequest) => post<EligibilityRe
 export const analyseChoices = (body: ChoicesRequest) => post<ChoicesResponse>('/api/choices/', body);
 export const analyseClass = (body: { learners: ClassLearnerInput[]; mode: Mode; fill?: boolean }) =>
   post<ClassResponse>('/api/class/', body);
+export const checkColleges = (body: CollegesRequest) => post<CollegesResponse>('/api/colleges/', body);

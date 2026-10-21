@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import App from '../App';
 import type { EligibilityRequest } from '../lib/types';
-import { META, choicesResponse, eligibility, evaluation, fakeServer, metaHandler, seedChoices, seedProfile } from '../testkit';
+import { META, choicesResponse, collegeResult, collegesResponse, eligibility, evaluation, fakeServer, metaHandler, seedChoices, seedProfile } from '../testkit';
 
 const FIT = evaluation({ code: '102', name: 'BACHELOR OF LAWS', institution: 'Beta University', pathway: 'social', band: 'best_fit', cutoff: 38, margin: 0.545 });
 const SAFE = evaluation({ code: '101', name: 'BACHELOR OF SCIENCE (NURSING)', band: 'safe' });
@@ -23,6 +23,10 @@ function serve(pathwayCalls: EligibilityRequest[] = []) {
       return eligibility({ best_fit: [FIT], safe: [SAFE], stretch: [STRETCH] });
     },
     'POST /api/choices/': () => choicesResponse([SAFE, STRETCH], [{ code: 'fewer_than_four', message: 'Only 2 of 4 choices are used.' }]),
+    'POST /api/colleges/': () => collegesResponse(
+      { eligible: [collegeResult()], near: [collegeResult({ id: 'kmtc-11', name: 'Diploma in Community Health Nursing', status: 'near' })] },
+      { counts: { eligible: 40, near: 6, not_eligible: 60 } },
+    ),
   });
 }
 
@@ -125,6 +129,7 @@ describe('learner report', () => {
         requests.push(body);
         return body.pathways?.[0] === 'stem' ? eligibility({ safe: many }) : eligibility();
       },
+      'POST /api/colleges/': () => collegesResponse(),
     });
     await open();
     const families = await screen.findByRole('region', { name: 'Career families' });
@@ -139,6 +144,7 @@ describe('learner report', () => {
     fakeServer({
       ...metaHandler,
       'POST /api/eligibility/': (b) => ((b as EligibilityRequest).pathways?.[0] === 'social' ? eligibility({ best_fit: [FIT], safe: [SAFE] }) : eligibility()),
+      'POST /api/colleges/': () => collegesResponse(),
     });
     await open();
     const families = await screen.findByRole('region', { name: 'Career families' });
@@ -164,6 +170,54 @@ describe('learner report', () => {
     render(<App />);
     expect(await screen.findByText('Preparing the report...')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Print or save as PDF' })).toBeDisabled();
+  });
+
+  it('has a KMTC and TVET section with the counts and the eligible courses', async () => {
+    seedProfile();
+    serve();
+    await open();
+    const section = await screen.findByRole('region', { name: 'KMTC and TVET options' });
+    expect(section).toHaveTextContent('Eligible for 40 of 106 college programmes, with 6 more one grade short');
+    expect(section).toHaveTextContent('Diploma in Pharmacy');
+    expect(section).toHaveTextContent('KMTC · diploma · minimum mean grade C');
+    expect(section).not.toHaveTextContent('Community Health Nursing'); // a near miss is counted, not listed
+  });
+
+  it('does not print a minimum mean grade for courses that have none', async () => {
+    seedProfile();
+    fakeServer({
+      ...metaHandler,
+      'POST /api/eligibility/': () => eligibility(),
+      'POST /api/colleges/': () => collegesResponse({ eligible: [
+        collegeResult({ id: 'a', name: 'Artisan Welding', provider: 'tvet', level: 'artisan', min_mean: 'E' }),
+        collegeResult({ id: 'b', name: 'Unstated Mean Course', min_mean: null }),
+      ] }),
+    });
+    await open();
+    const section = await screen.findByRole('region', { name: 'KMTC and TVET options' });
+    expect(section).toHaveTextContent('TVET · artisan');
+    expect(section).not.toHaveTextContent('minimum mean grade');
+  });
+
+  it('asks for eight college courses at most', async () => {
+    seedProfile();
+    const { callsTo } = serve();
+    await open();
+    await screen.findByRole('region', { name: 'KMTC and TVET options' });
+    expect(callsTo('POST /api/colleges/')[0].body).toMatchObject({ limit: 8 });
+  });
+
+  it('says so when no college programme is met in full', async () => {
+    seedProfile();
+    fakeServer({
+      ...metaHandler,
+      'POST /api/eligibility/': () => eligibility(),
+      'POST /api/colleges/': () => collegesResponse(),
+    });
+    await open();
+    const section = await screen.findByRole('region', { name: 'KMTC and TVET options' });
+    expect(section).toHaveTextContent('No college programme is met in full on these results.');
+    expect(section).not.toHaveTextContent('one grade short');
   });
 
   it('explains how to read it, including the caveats', async () => {

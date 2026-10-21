@@ -125,11 +125,14 @@ export function ClassView() {
             </Notice>
           ) : null}
 
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
             <Stat label="Learners analysed" value={cohort.learners} />
             <Stat label="Mean total" value={cohort.mean_total === null ? '-' : cohort.mean_total.toFixed(1)} hint="best seven subjects, of 84" />
             <Stat label="With a safe course" value={formatPercent(cohort.safe_reach)} hint="at least one safe programme" />
             <Stat label="Need support" value={cohort.at_risk.length} hint="no safe or best-fit course" />
+            {cohort.college_reach !== null ? (
+              <Stat label="With a college route" value={formatPercent(cohort.college_reach)} hint="eligible for a KMTC or TVET course" />
+            ) : null}
           </div>
 
           <div className="grid gap-4 lg:grid-cols-2">
@@ -141,11 +144,22 @@ export function ClassView() {
             {cohort.at_risk.length > 0 ? (
               <section className="card" aria-label="Learners who need support">
                 <h3 className="mb-2 text-sm font-semibold">Learners who need support</h3>
-                <p className="mb-2 text-sm text-muted">No safe or best-fit degree programme on current results. Consider TVET and KMTC pathways and subject-improvement plans.</p>
+                <p className="mb-2 text-sm text-muted">
+                  No safe or best-fit degree programme on current results.
+                  {cohort.college_reach !== null
+                    ? ` ${cohort.at_risk_with_college_option.length} of ${cohort.at_risk.length} can still enter at least one KMTC or TVET course.`
+                    : ' Consider TVET and KMTC pathways and subject-improvement plans.'}
+                </p>
                 <ul className="list-disc pl-5 text-sm">
-                  {cohort.at_risk.map((n) => (
-                    <li key={n}>{n}</li>
-                  ))}
+                  {cohort.at_risk.map((n) => {
+                    const count = result.learners.find((l) => l.name === n)?.colleges_eligible;
+                    return (
+                      <li key={n}>
+                        {n}
+                        {count === null || count === undefined ? '' : count > 0 ? `: eligible for ${count} KMTC or TVET course${count > 1 ? 's' : ''}` : ': no KMTC or TVET course on current results'}
+                      </li>
+                    );
+                  })}
                 </ul>
               </section>
             ) : (
