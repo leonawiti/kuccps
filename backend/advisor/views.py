@@ -1,15 +1,17 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from catalogue.college_catalogue import COLLEGES
 from catalogue.loader import catalogue, programmes_by_code
 from engine.bands import BAND_ORDER
 from engine.careers import PATHWAYS
 from engine.classes import analyse_class
+from engine.colleges import rank_colleges
 from engine.grades import GRADE_POINTS, GRADES, MEAN_GRADE_BANDS, mean_grade
 from engine.recommend import analyse_choices, learner_from_grades, rank_programmes
 from engine.subjects import SUBJECTS
 
-from .serializers import ChoicesSerializer, ClassSerializer, EligibilitySerializer
+from .serializers import ChoicesSerializer, ClassSerializer, CollegesSerializer, EligibilitySerializer
 
 BAND_LABELS = {
     'best_fit': ('Best fit', 'Within reach and close to the cut-off: the programmes to aim for.'),
@@ -49,6 +51,8 @@ class Meta(APIView):
             'mean_grade_bands': [{'grade': g, 'min': lo, 'max': hi} for lo, hi, g in MEAN_GRADE_BANDS],
             'pathways': [{'key': k, 'label': v} for k, v in PATHWAYS.items()],
             'bands': [{'key': k, 'label': BAND_LABELS[k][0], 'description': BAND_LABELS[k][1]} for k in BAND_ORDER],
+            'colleges': {'kmtc': sum(1 for c in COLLEGES if c['provider'] == 'kmtc'),
+                         'tvet': sum(1 for c in COLLEGES if c['provider'] == 'tvet')},
             'catalogue': {
                 'programmes': len(data['programmes']),
                 'institutions': sorted({p['institution'] for p in data['programmes']}),
@@ -112,4 +116,30 @@ class ClassAnalysis(APIView):
         s = ClassSerializer(data=request.data)
         s.is_valid(raise_exception=True)
         d = s.validated_data
-        return Response(analyse_class(d['learners'], catalogue()['programmes'], d['mode'], d['fill']))
+        return Response(analyse_class(d['learners'], catalogue()['programmes'], d['mode'], d['fill'], colleges=COLLEGES))
+
+
+class Colleges(APIView):
+    """KMTC and TVET programmes: eligibility from the mean grade and subject grades (no cut-off points)."""
+
+    def post(self, request):
+        s = CollegesSerializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        d = s.validated_data
+        learner = learner_from_grades(d['grades'])
+        q = (d.get('q') or '').strip().lower()
+        entries = [
+            c for c in COLLEGES
+            if (not d.get('providers') or c['provider'] in d['providers'])
+            and (not d.get('levels') or c['level'] in d['levels'])
+            and (not q or q in c['name'].lower() or q in (c['category'] or '').lower())
+        ]
+        groups = {'eligible': [], 'near': [], 'not_eligible': []}
+        for result in rank_colleges(entries, learner):
+            groups[result['status']].append(result)
+        return Response({
+            'learner': _learner_summary(learner),
+            'counts': {k: len(v) for k, v in groups.items()},
+            'truncated': {k: len(v) > d['limit'] for k, v in groups.items()},
+            'results': {k: v[:d['limit']] for k, v in groups.items()},
+        })

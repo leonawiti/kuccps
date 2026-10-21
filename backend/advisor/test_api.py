@@ -180,6 +180,9 @@ class ClassTests(ApiTestCase):
         self.assertEqual(data['cohort']['learners'], 1)
         self.assertEqual(data['learners'][0]['name'], 'Mid')
         self.assertEqual(len(data['rejected']), 1)
+        # Checked against the 106 KMTC and TVET programmes too.
+        self.assertGreater(data['learners'][0]['colleges_eligible'], 20)
+        self.assertEqual(data['cohort']['college_reach'], 1.0)
 
     def test_an_empty_or_malformed_class_is_refused(self):
         for body in ({'learners': []}, {}, {'learners': [{'name': 'x'}]}, {'learners': 'x'}):
@@ -191,6 +194,66 @@ class ClassSizeTests(ApiTestCase):
         r = self.post('/api/class/', {'learners': [{'grades': MID}] * 301})
         self.assertEqual(r.status_code, 400)
         self.assertIn('300', r.json()['detail'])
+
+
+class CollegesTests(ApiTestCase):
+    # The KMTC and TVET data is part of the code, so these run against the real 106 entries.
+    def ids(self, data, status):
+        return [r['id'] for r in data['results'][status]]
+
+    def test_every_entry_is_sorted_into_eligible_near_and_not_eligible(self):
+        r = self.post('/api/colleges/', {'grades': MID, 'limit': 200})
+
+        self.assertEqual(r.status_code, 200)
+        data = r.json()
+        self.assertEqual(data['learner']['mean_grade'], 'B')
+        self.assertEqual(sum(data['counts'].values()), 106)
+        self.assertIn('kmtc-28', self.ids(data, 'eligible'))  # Diploma in Pharmacy: met in full by this learner
+        self.assertEqual(set(data['counts']), {'eligible', 'near', 'not_eligible'})
+
+    def test_a_result_carries_the_course_and_where_it_came_from(self):
+        data = self.post('/api/colleges/', {'grades': MID, 'q': 'pharmacy', 'limit': 50}).json()
+        pharmacy = next(r for r in data['results']['eligible'] if r['id'] == 'kmtc-28')
+        self.assertEqual((pharmacy['provider'], pharmacy['level'], pharmacy['page']), ('kmtc', 'diploma', 2))
+        self.assertIn('Chemistry/Physical Science', pharmacy['source'])
+
+    def test_a_course_not_met_lists_what_is_missing(self):
+        weak = {s: 'D' for s in ('ENG', 'KIS', 'MAT A', 'BIO', 'CHE', 'PHY', 'GEO')}
+        data = self.post('/api/colleges/', {'grades': weak, 'q': 'pharmacy', 'limit': 50}).json()
+        item = next(r for r in data['results']['not_eligible'] if r['id'] == 'kmtc-28')
+        self.assertTrue(any(u['kind'] == 'mean' for u in item['unmet']))
+
+    def test_filters_by_provider_level_and_text(self):
+        kmtc = self.post('/api/colleges/', {'grades': MID, 'providers': ['kmtc'], 'limit': 200}).json()
+        self.assertEqual(sum(kmtc['counts'].values()), 36)
+
+        certs = self.post('/api/colleges/', {'grades': MID, 'providers': ['tvet'], 'levels': ['certificate'], 'limit': 200}).json()
+        self.assertEqual(sum(certs['counts'].values()), 24)
+
+        found = self.post('/api/colleges/', {'grades': MID, 'q': 'pharmacy', 'limit': 50}).json()
+        everything = [r['id'] for status in found['results'].values() for r in status]
+        self.assertCountEqual(everything, ['kmtc-28', 'tvet-pharmacy-diploma'])
+
+    def test_diplomas_come_before_certificates_within_a_status(self):
+        data = self.post('/api/colleges/', {'grades': MID, 'limit': 200}).json()
+        levels = [r['level'] for r in data['results']['eligible']]
+        order = {'diploma': 0, 'certificate': 1, 'artisan': 2}
+        self.assertEqual(levels, sorted(levels, key=order.get))
+
+    def test_each_status_is_limited_but_the_counts_are_full(self):
+        data = self.post('/api/colleges/', {'grades': MID, 'limit': 3}).json()
+        self.assertEqual(len(data['results']['eligible']), 3)
+        self.assertGreater(data['counts']['eligible'], 3)
+        self.assertTrue(data['truncated']['eligible'])
+
+    def test_bad_input_is_refused(self):
+        for body in ({}, {'grades': MID, 'providers': ['nowhere']}, {'grades': MID, 'levels': ['phd']}, {'grades': MID, 'limit': 0},
+                     {'grades': {'ENG': 'A'}}):
+            self.assertEqual(self.post('/api/colleges/', body).status_code, 400, body)
+
+    def test_meta_reports_how_many_college_programmes_there_are(self):
+        data = self.client.get('/api/meta/').json()
+        self.assertEqual(data['colleges'], {'kmtc': 36, 'tvet': 70})
 
 
 class MissingCatalogueTests(SimpleTestCase):

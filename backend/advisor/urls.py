@@ -8,4 +8,5 @@ urlpatterns = [
     path('eligibility/', views.Eligibility.as_view()),
     path('choices/', views.Choices.as_view()),
     path('class/', views.ClassAnalysis.as_view()),
+    path('colleges/', views.Colleges.as_view()),
 ]

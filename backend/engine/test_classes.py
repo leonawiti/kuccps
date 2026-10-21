@@ -98,3 +98,39 @@ class BestFitAndClusterTests(SimpleTestCase):
 
     def test_the_best_cluster_is_the_highest_across_programmes(self):
         self.assertEqual(self.mid['best_cluster'], 38.545)  # the other programme gives 37.569
+
+
+class CollegeOptionsTests(SimpleTestCase):
+    """Degrees are not the only route: the same class checked against KMTC and TVET entries."""
+    COLLEGES = [
+        {'id': 'open', 'provider': 'tvet', 'name': 'Open course', 'level': 'artisan', 'category': 'x', 'min_mean': 'E',
+         'options': [{'label': None, 'rules': []}], 'flags': []},
+        {'id': 'high', 'provider': 'kmtc', 'name': 'Demanding course', 'level': 'diploma', 'category': 'x', 'min_mean': 'A',
+         'options': [{'label': None, 'rules': []}], 'flags': []},
+    ]
+
+    def setUp(self):
+        self.result = analyse_class(LEARNERS, PROGRAMMES, mode='classic', colleges=self.COLLEGES)
+        self.by_name = {l['name']: l for l in self.result['learners']}
+
+    def test_each_learner_has_a_count_of_college_programmes_they_are_eligible_for(self):
+        self.assertEqual(self.by_name['Strong']['colleges_eligible'], 2)  # mean A
+        self.assertEqual(self.by_name['Mid']['colleges_eligible'], 1)     # mean B: not the demanding one
+        self.assertEqual(self.by_name['Weak']['colleges_eligible'], 1)    # mean D: only the open one
+
+    def test_the_cohort_shows_how_many_have_an_option_and_which_at_risk_learners_do(self):
+        c = self.result['cohort']
+        self.assertEqual(c['college_reach'], 1.0)
+        self.assertEqual(c['at_risk_with_college_option'], ['Weak'])
+
+    def test_an_at_risk_learner_with_no_college_option_is_not_in_that_list(self):
+        only_high = [self.COLLEGES[1]]
+        result = analyse_class(LEARNERS, PROGRAMMES, mode='classic', colleges=only_high)
+        self.assertEqual(result['cohort']['at_risk'], ['Weak'])
+        self.assertEqual(result['cohort']['at_risk_with_college_option'], [])
+        self.assertEqual(result['cohort']['college_reach'], 0.333)
+
+    def test_without_college_entries_the_fields_are_empty_not_zero(self):
+        result = analyse_class(LEARNERS, PROGRAMMES, mode='classic')
+        self.assertIsNone(result['learners'][0]['colleges_eligible'])
+        self.assertIsNone(result['cohort']['college_reach'])

@@ -24,10 +24,8 @@ class PreferencesSerializer(serializers.Serializer):
         return value
 
 
-class LearnerGradesSerializer(serializers.Serializer):
+class GradesSerializer(serializers.Serializer):
     grades = GradesField()
-    mode = serializers.ChoiceField(choices=MODES, default='flexible')
-    fill = serializers.BooleanField(default=True)
 
     def validate_grades(self, value):
         try:
@@ -35,6 +33,18 @@ class LearnerGradesSerializer(serializers.Serializer):
         except ValueError as e:
             raise serializers.ValidationError(str(e))
         return value
+
+
+class LearnerGradesSerializer(GradesSerializer):
+    mode = serializers.ChoiceField(choices=MODES, default='flexible')
+    fill = serializers.BooleanField(default=True)
+
+
+class CollegesSerializer(GradesSerializer):
+    providers = serializers.ListField(child=serializers.ChoiceField(choices=['kmtc', 'tvet']), required=False)
+    levels = serializers.ListField(child=serializers.ChoiceField(choices=['diploma', 'certificate', 'artisan']), required=False)
+    q = serializers.CharField(required=False, allow_blank=True)
+    limit = serializers.IntegerField(min_value=1, max_value=200, default=50)
 
 
 class EligibilitySerializer(LearnerGradesSerializer):
