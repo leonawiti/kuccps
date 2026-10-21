@@ -163,3 +163,59 @@ are only 0.01 and 0.06 points above their cut-offs, and both carry data warnings
 **Known limits:** rate limit is 60 requests a minute per address, and the checker re-queries (after a short pause)
 whenever a filter changes, so very rapid filtering could hit it; a class of 300 takes around 4 to 5 seconds;
 Safari, Firefox and screen readers were not tried; nothing has been committed or deployed.
+
+## 13. KMTC and TVET programmes — backend 188 tests, frontend 184 tests
+**What it is.** The two reference PDFs are now data and a screen: **36 KMTC courses and 70 TVET programmes** (diploma,
+certificate and artisan). They have no cut-off points, so they are checked differently from degrees: a learner is
+**eligible** when their KCSE mean grade reaches the minimum and each subject-grade rule is met by a *different* subject;
+**near** when everything would be met if each minimum were one grade lower; **not eligible** otherwise, with every
+shortfall listed ("Needs a mean grade of B+; yours is B", "Needs Chemistry or Physical Sciences, at least C").
+**Getting the data out of the PDFs.** Text extraction mangled the TVET table (two-column layout), so I rendered the pages
+as images through Chrome's PDF viewer and read the table directly, then wrote both documents out by hand in
+`catalogue/colleges_data.py` (KMTC) and `catalogue/colleges_tvet.py` (TVET). Each entry keeps its page number and the
+requirement as printed, so a person can check any course against the PDF.
+**How the transcription was checked.**
+- Every KMTC `source` string was compared with the PDF text by machine (ignoring layout noise): one mismatch found
+  and fixed (I had attached "(NEW)", which belongs to the course title, to the requirement text).
+- Every KMTC course's *rules* were then rendered back into words and read against its source: all 36 agree.
+- The TVET rules were transcribed from the page images; a sample was re-read against them. There is no machine check
+  for TVET text because the PDF text does not extract in reading order.
+- Tests: structure of all 106 entries; entries compared with the printed text (Pharmacy, Emergency Medical Technician,
+  Community Oral Health, Physiotherapy, Mortuary Science, TVET Law, Nursing, Pharmacy alternatives, Education variants,
+  Forestry, Animal Health); a learner with an A in every subject must be eligible for **all 106** (catches an
+  impossible rule or a typo in a subject list); a learner with an E in every subject must be eligible only for the 10
+  artisan courses that print no requirements.
+**Decisions and judgement calls** (also in the module docstrings):
+- "C in English or Kiswahili and Biology" applies the grade to each subject, so it is two rules.
+- "Any two of ..." needs two different subjects, and one subject cannot count toward two rules.
+- "Economics" appears in four lists but is not a KCSE subject we hold, so it is left out of those lists (noted on each course).
+- Physiotherapy names "Biology" only, so Biological Sciences is not accepted there (taken literally, noted).
+- Artisan "D- and below" is read as **no minimum mean grade**; the course is aimed at lower grades but the document does not bar a higher one.
+- Health Insurance Management (KMTC diploma) prints **no mean grade**; it is checked on subjects only and flagged.
+- Mortuary Science prints a mean grade and **no subject rules** (the source may be truncated); flagged.
+- TVET Animal Health certificate: the printed row is **cut off at the page boundary** and shows only the Biology line; flagged `incomplete_source`.
+- "Two teaching subjects" (Education diplomas) is modelled as any two subjects, not already used for English or Mathematics.
+- The TVET table has three blocks (General; KNEC examination; Internal examiners). The placement of the "KNEC EXAMINATION"
+  heading, which sits at the foot of page 3, is read from the layout, not from words.
+- Visually/hearing-impaired variants of the Education diplomas (lower grades) are included as separate entries, labelled.
+**Engine** (`engine/colleges.py`, 21 tests, every mutation caught after two weak tests were strengthened): mean-grade
+check, assignment of distinct subjects to rules (reusing the degree code), alternatives (Alternative A / B), the
+near-miss rule, and reporting of exactly what is unmet. When no alternative is met, the closest one is reported.
+**API:** `POST /api/colleges/` (filter by provider, level and text; per-status limits; counts are always full) and a
+`colleges` count in `/api/meta/`. Class analysis now also reports, per learner, how many college programmes they are
+eligible for, the share of the class with at least one, and which "need support" learners still have a college route.
+Measured cost: about 0.4 s more for 200 learners.
+**Screens:** a new **Colleges and TVET** tab (eligible / near miss / not eligible, filters, what each course asks for,
+the source page and text, and a reminder that KMTC applications go through the KUCCPS portal); a **KMTC and TVET
+section in the report**; and two figures on the class dashboard. About page updated.
+**Tests and mutation checks:** the screens were written before their tests, so they were mutation-checked afterwards:
+about 50 breakages across the new screen, report section, dashboard and helpers. Survivors were real gaps (a course
+that is *not* met must never say "Met through..."; a category equal to the course name must not repeat; artisan courses
+must not print "minimum mean grade E" in the report), each fixed and re-run.
+**Real browser:** the new screen was opened in Chrome against the live API: 95 eligible, 10 near miss and 1 not eligible
+for a learner with a C mean (42 points), with the source page on each card and no console errors. Two problems in my
+screenshot script (a wait condition returning a DOM node; a hash-only navigation racing a reload) cost time but were not
+app faults.
+**Not done:** the TVET source text has no automated cross-check; KMTC/TVET data is a 2026/2027 snapshot with no update
+path other than editing the two data modules; institutions that offer each TVET programme are not in the documents, so
+none are listed.
