@@ -1,0 +1,220 @@
+{
+  "programmes": 2122,
+  "institutions": 71,
+  "slots_ok": 1745,
+  "slots_none": 342,
+  "slots_defective": 35,
+  "no_cutoff": 107,
+  "defects": [
+    {
+      "code": "1105120",
+      "name": "BACHELOR OF SCIENCE",
+      "cell": "MAT A(121):C | BIO(231)/CHE(233)/PHY(23 | BIO(231)/CHE(233)/PHY(232)",
+      "problem": "Expected one grade after a colon: 'BIO(231)/CHE(233)/PHY(23'"
+    },
+    {
+      "code": "1096120",
+      "name": "BACHELOR OF SCIENCE",
+      "cell": "MAT A(121):C | BIO(231)/CHE(233)/PHY(23 | BIO(231)/CHE(233)/PHY(232)",
+      "problem": "Expected one grade after a colon: 'BIO(231)/CHE(233)/PHY(23'"
+    },
+    {
+      "code": "1079120",
+      "name": "BACHELOR OF SCIENCE",
+      "cell": "MAT A(121):C | BIO(231)/CHE(233)/PHY(23 | BIO(231)/CHE(233)/PHY(232)",
+      "problem": "Expected one grade after a colon: 'BIO(231)/CHE(233)/PHY(23'"
+    },
+    {
+      "code": "1061120",
+      "name": "BACHELOR OF SCIENCE",
+      "cell": "MAT A(121):C | BIO(231)/CHE(233)/PHY(23 | BIO(231)/CHE(233)/PHY(232)",
+      "problem": "Expected one grade after a colon: 'BIO(231)/CHE(233)/PHY(23'"
+    },
+    {
+      "code": "1057120",
+      "name": "BACHELOR OF SCIENCE",
+      "cell": "MAT A(121):C | BIO(231)/CHE(233)/PHY(23 | BIO(231)/CHE(233)/PHY(232)",
+      "problem": "Expected one grade after a colon: 'BIO(231)/CHE(233)/PHY(23'"
+    },
+    {
+      "code": "1093120",
+      "name": "BACHELOR OF SCIENCE (BSC.)",
+      "cell": "MAT A(121):C | BIO(231)/CHE(233)/PHY(23 | BIO(231)/CHE(233)/PHY(232)",
+      "problem": "Expected one grade after a colon: 'BIO(231)/CHE(233)/PHY(23'"
+    },
+    {
+      "code": "1253120",
+      "name": "BACHELOR OF SCIENCE (BSC.)",
+      "cell": "MAT A(121):C | BIO(231)/CHE(233)/PHY(23 | BIO(231)/CHE(233)/PHY(232)",
+      "problem": "Expected one grade after a colon: 'BIO(231)/CHE(233)/PHY(23'"
+    },
+    {
+      "code": "1118120",
+      "name": "BACHELOR OF SCIENCE (BSC.)",
+      "cell": "MAT A(121):C | BIO(231)/CHE(233)/PHY(23 | BIO(231)/CHE(233)/PHY(232)",
+      "problem": "Expected one grade after a colon: 'BIO(231)/CHE(233)/PHY(23'"
+    },
+    {
+      "code": "1515120",
+      "name": "BACHELOR OF SCIENCE (BASIC SCIENCE, WITH IT)",
+      "cell": "MAT A(121):C | BIO(231)/CHE(233)/PHY(23 | BIO(231)/CHE(233)/PHY(232)",
+      "problem": "Expected one grade after a colon: 'BIO(231)/CHE(233)/PHY(23'"
+    },
+    {
+      "code": "1229120",
+      "name": "BACHELOR OF SCIENCE (BASIC SCIENCE, WITH IT)",
+      "cell": "MAT A(121):C | BIO(231)/CHE(233)/PHY(23 | BIO(231)/CHE(233)/PHY(232)",
+      "problem": "Expected one grade after a colon: 'BIO(231)/CHE(233)/PHY(23'"
+    },
+    {
+      "code": "1685120",
+      "name": "BACHELOR OF SCIENCE",
+      "cell": "MAT A(121):C | BIO(231)/CHE(233)/PHY(23 | BIO(231)/CHE(233)/PHY(232)",
+      "problem": "Expected one grade after a colon: 'BIO(231)/CHE(233)/PHY(23'"
+    },
+    {
+      "code": "1263120",
+      "name": "BACHELOR OF SCIENCE (B.SC)",
+      "cell": "MAT A(121):C | BIO(231)/CHE(233)/PHY(23 | BIO(231)/CHE(233)/PHY(232)",
+      "problem": "Expected one grade after a colon: 'BIO(231)/CHE(233)/PHY(23'"
+    },
+    {
+      "code": "1114120",
+      "name": "BACHELOR OF SCIENCE (B.SC)",
+      "cell": "MAT A(121):C | BIO(231)/CHE(233)/PHY(23 | BIO(231)/CHE(233)/PHY(232)",
+      "problem": "Expected one grade after a colon: 'BIO(231)/CHE(233)/PHY(23'"
+    },
+    {
+      "code": "1111120",
+      "name": "BACHELOR OF SCIENCE (B.SC)",
+      "cell": "MAT A(121):C | BIO(231)/CHE(233)/PHY(23 | BIO(231)/CHE(233)/PHY(232)",
+      "problem": "Expected one grade after a colon: 'BIO(231)/CHE(233)/PHY(23'"
+    },
+    {
+      "code": "1082282",
+      "name": "BACHELOR OF EDUCATION (FRENCH)",
+      "cell": "FRE(501):C+ | ENG(101)/KIS(102)/MAT A(121)/MAT B(122)/HAG(311)/GEO(312)\n/CRE(313)/IRE(314)/HRE(31 5)/SEE(316)/HSC(441)/ARD(\n442)/CMP(451)/GER(502)/A RB(503)/KSL(504)/MUC(511\n)/ACC(561)/COM(562)/BST(",
+      "problem": "Expected one grade after a colon: 'ENG(101)/KIS(102)/MAT A(121)/MAT B(122)/HAG(311)/GEO(312)\\n/CRE(313)/IRE(314)/HRE(31 5)/SEE(316)/HSC(441)/ARD(\\n442)/CMP(451)/GER(502)/A RB(503)/KSL(504)/MUC(511\\n)/ACC(561)/COM(562)/BST('"
+    },
+    {
+      "code": "1470282",
+      "name": "BACHELOR OF EDUCATION (FRENCH)",
+      "cell": "FRE(501):C+ | ENG(101)/KIS(102)/MAT A(121)/MAT B(122)/HAG(311)/GEO(312)\n/CRE(313)/IRE(314)/HRE(31 5)/SEE(316)/HSC(441)/ARD(\n442)/CMP(451)/GER(502)/A RB(503)/KSL(504)/MUC(511\n)/ACC(561)/COM(562)/BST(",
+      "problem": "Expected one grade after a colon: 'ENG(101)/KIS(102)/MAT A(121)/MAT B(122)/HAG(311)/GEO(312)\\n/CRE(313)/IRE(314)/HRE(31 5)/SEE(316)/HSC(441)/ARD(\\n442)/CMP(451)/GER(502)/A RB(503)/KSL(504)/MUC(511\\n)/ACC(561)/COM(562)/BST('"
+    },
+    {
+      "code": "1117282",
+      "name": "BACHELOR OF EDUCATION ARTS (FRENCH)",
+      "cell": "FRE(501):C+ | ENG(101)/KIS(102)/MAT A(121)/MAT B(122)/HAG(311)/GEO(312)\n/CRE(313)/IRE(314)/HRE(31 5)/SEE(316)/HSC(441)/ARD(\n442)/CMP(451)/GER(502)/A RB(503)/KSL(504)/MUC(511\n)/ACC(561)/COM(562)/BST(",
+      "problem": "Expected one grade after a colon: 'ENG(101)/KIS(102)/MAT A(121)/MAT B(122)/HAG(311)/GEO(312)\\n/CRE(313)/IRE(314)/HRE(31 5)/SEE(316)/HSC(441)/ARD(\\n442)/CMP(451)/GER(502)/A RB(503)/KSL(504)/MUC(511\\n)/ACC(561)/COM(562)/BST('"
+    },
+    {
+      "code": "1111282",
+      "name": "BACHELOR OF EDUCATION (ARTS) FRENCH",
+      "cell": "FRE(501):C+ | ENG(101)/KIS(102)/MAT A(121)/MAT B(122)/HAG(311)/GEO(312)\n/CRE(313)/IRE(314)/HRE(31 5)/SEE(316)/HSC(441)/ARD(\n442)/CMP(451)/GER(502)/A RB(503)/KSL(504)/MUC(511\n)/ACC(561)/COM(562)/BST(",
+      "problem": "Expected one grade after a colon: 'ENG(101)/KIS(102)/MAT A(121)/MAT B(122)/HAG(311)/GEO(312)\\n/CRE(313)/IRE(314)/HRE(31 5)/SEE(316)/HSC(441)/ARD(\\n442)/CMP(451)/GER(502)/A RB(503)/KSL(504)/MUC(511\\n)/ACC(561)/COM(562)/BST('"
+    },
+    {
+      "code": "1105293",
+      "name": "BACHELOR OF SCIENCE (ANIMAL SCIENCE)",
+      "cell": "BIO(231):C+ | MAT\nA(121)/PHY(232)/CHE(233):",
+      "problem": "No minimum grade: 'MAT\\nA(121)/PHY(232)/CHE(233):'"
+    },
+    {
+      "code": "1057293",
+      "name": "BACHELOR OF SCIENCE (ANIMAL SCIENCE)",
+      "cell": "BIO(231):C+ | MAT\nA(121)/PHY(232)/CHE(233):",
+      "problem": "No minimum grade: 'MAT\\nA(121)/PHY(232)/CHE(233):'"
+    },
+    {
+      "code": "1087293",
+      "name": "BACHELOR OF SCIENCE IN ANIMAL SCIENCE",
+      "cell": "BIO(231):C+ | MAT\nA(121)/PHY(232)/CHE(233):",
+      "problem": "No minimum grade: 'MAT\\nA(121)/PHY(232)/CHE(233):'"
+    },
+    {
+      "code": "1685293",
+      "name": "BACHELOR OF SCIENCE IN ANIMAL SCIENCE",
+      "cell": "BIO(231):C+ | MAT\nA(121)/PHY(232)/CHE(233):",
+      "problem": "No minimum grade: 'MAT\\nA(121)/PHY(232)/CHE(233):'"
+    },
+    {
+      "code": "1244293",
+      "name": "BACHELOR OF SCIENCE IN ANIMAL SCIENCE",
+      "cell": "BIO(231):C+ | MAT\nA(121)/PHY(232)/CHE(233):",
+      "problem": "No minimum grade: 'MAT\\nA(121)/PHY(232)/CHE(233):'"
+    },
+    {
+      "code": "1253293",
+      "name": "BACHELOR OF SCIENCE (ANIMAL SCIENCE & MANAGEMENT)",
+      "cell": "BIO(231):C+ | MAT\nA(121)/PHY(232)/CHE(233):",
+      "problem": "No minimum grade: 'MAT\\nA(121)/PHY(232)/CHE(233):'"
+    },
+    {
+      "code": "1114293",
+      "name": "BACHELOR OF SCIENCE (ANIMAL SCIENCE & MANAGEMENT)",
+      "cell": "BIO(231):C+ | MAT\nA(121)/PHY(232)/CHE(233):",
+      "problem": "No minimum grade: 'MAT\\nA(121)/PHY(232)/CHE(233):'"
+    },
+    {
+      "code": "1229293",
+      "name": "BACHELOR OF SCIENCE (ANIMAL SCIENCE, WITH IT)",
+      "cell": "BIO(231):C+ | MAT\nA(121)/PHY(232)/CHE(233):",
+      "problem": "No minimum grade: 'MAT\\nA(121)/PHY(232)/CHE(233):'"
+    },
+    {
+      "code": "1082315",
+      "name": "BACHELOR OF EDUCATION (PHYSICAL EDUCATION)",
+      "cell": "BIO(231)/GSC(237):C+ | MAT A(121)/MAT\nB(122)/PHY(232)/CHE(233):",
+      "problem": "No minimum grade: 'MAT A(121)/MAT\\nB(122)/PHY(232)/CHE(233):'"
+    },
+    {
+      "code": "1114315",
+      "name": "BACHELOR OF EDUCATION IN PHYSICAL EDUCATION AND RECREATION",
+      "cell": "BIO(231)/GSC(237):C+ | MAT A(121)/MAT\nB(122)/PHY(232)/CHE(233):",
+      "problem": "No minimum grade: 'MAT A(121)/MAT\\nB(122)/PHY(232)/CHE(233):'"
+    },
+    {
+      "code": "1111315",
+      "name": "BACHELOR OF EDUCATION (PHYSICAL EDUCATION)",
+      "cell": "BIO(231)/GSC(237):C+ | MAT A(121)/MAT\nB(122)/PHY(232)/CHE(233):",
+      "problem": "No minimum grade: 'MAT A(121)/MAT\\nB(122)/PHY(232)/CHE(233):'"
+    },
+    {
+      "code": "1073543",
+      "name": "BACHELOR OF SCIENCE (HEALTH RECORDS AND INFORMATICS)",
+      "cell": "BIO(231)/BSC(235):C- | MAT A(121):C | ENG(101)/KIS(102):C+ | PHY(232)/CHE(233)/PSC(23",
+      "problem": "Expected one grade after a colon: 'PHY(232)/CHE(233)/PSC(23'"
+    },
+    {
+      "code": "1105693",
+      "name": "BACHELOR OF SCIENCE IN ANIMAL PRODUCTS TECHNOLOGY",
+      "cell": "BIO(231):C+ | MAT\nA(121)/PHY(232)/CHE(233):",
+      "problem": "No minimum grade: 'MAT\\nA(121)/PHY(232)/CHE(233):'"
+    },
+    {
+      "code": "1515166",
+      "name": "BACHELOR OF EDUCATION (FRENCH, WITH IT)",
+      "cell": "FRE(501):C+ | ENG(101)/KIS(102)/MAT A(121)/MAT B(122)/HAG(311)/GEO(312)\n/CRE(313)/IRE(314)/HRE(31 5)/SEE(316)/HSC(441)/ARD(\n442)/CMP(451)/GER(502)/A RB(503)/KSL(504)/MUC(511\n)/ACC(561)/COM(562)/BST(",
+      "problem": "Expected one grade after a colon: 'ENG(101)/KIS(102)/MAT A(121)/MAT B(122)/HAG(311)/GEO(312)\\n/CRE(313)/IRE(314)/HRE(31 5)/SEE(316)/HSC(441)/ARD(\\n442)/CMP(451)/GER(502)/A RB(503)/KSL(504)/MUC(511\\n)/ACC(561)/COM(562)/BST('"
+    },
+    {
+      "code": "1229166",
+      "name": "BACHELOR OF EDUCATION (FRENCH, WITH IT)",
+      "cell": "FRE(501):C+ | ENG(101)/KIS(102)/MAT A(121)/MAT B(122)/HAG(311)/GEO(312)\n/CRE(313)/IRE(314)/HRE(31 5)/SEE(316)/HSC(441)/ARD(\n442)/CMP(451)/GER(502)/A RB(503)/KSL(504)/MUC(511\n)/ACC(561)/COM(562)/BST(",
+      "problem": "Expected one grade after a colon: 'ENG(101)/KIS(102)/MAT A(121)/MAT B(122)/HAG(311)/GEO(312)\\n/CRE(313)/IRE(314)/HRE(31 5)/SEE(316)/HSC(441)/ARD(\\n442)/CMP(451)/GER(502)/A RB(503)/KSL(504)/MUC(511\\n)/ACC(561)/COM(562)/BST('"
+    },
+    {
+      "code": "1263316",
+      "name": "BACHELOR OF EDUCATION (PHYSICAL EDUCATION AND SPORTS)",
+      "cell": "BIO(231)/GSC(237):C+ | MAT A(121)/MAT\nB(122)/PHY(232)/CHE(233):",
+      "problem": "No minimum grade: 'MAT A(121)/MAT\\nB(122)/PHY(232)/CHE(233):'"
+    },
+    {
+      "code": "1117B71",
+      "name": "BACHELOR OF SCIENCE IN ANIMAL SCIENCE",
+      "cell": "BIO(231):C+ | MAT\nA(121)/PHY(232)/CHE(233):",
+      "problem": "No minimum grade: 'MAT\\nA(121)/PHY(232)/CHE(233):'"
+    }
+  ]
+}
