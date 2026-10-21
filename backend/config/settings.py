@@ -50,6 +50,9 @@ REST_FRAMEWORK = {
     'UNAUTHENTICATED_USER': None,
     'DEFAULT_THROTTLE_CLASSES': ['rest_framework.throttling.AnonRateThrottle'],
     'DEFAULT_THROTTLE_RATES': {'anon': '100000/min' if TESTING else '60/min'},
+    # One nginx sits in front. The rate limiter then counts each visitor by the address nginx recorded (the last
+    # entry of X-Forwarded-For) instead of nginx's own address, and ignores anything the visitor put in the header.
+    'NUM_PROXIES': 1,
 }
 
 SECURE_CONTENT_TYPE_NOSNIFF = True

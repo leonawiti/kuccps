@@ -10,7 +10,7 @@ A tool that mimics how the Kenya Universities and Colleges Central Placement Ser
 - It analyses a **whole class or school** from a mark sheet (a dashboard of grade spread, subject strength, reach by career family, and learners who need support).
 - It produces a **printable report** for a learner (print, then save as PDF).
 
-**Status (2026-10-20): built and tested; pushed to GitHub, not deployed.** 188 backend tests and 184 frontend tests pass, every test was checked by deliberately breaking the code, and the app has been run end to end in a real browser. The full account of what was built, decided and found along the way is in [docs/DEVLOG.md](docs/DEVLOG.md).
+**Status (2026-10-21): built, tested and being deployed; see docs/deploy.md.** 188 backend tests and 184 frontend tests pass, every test was checked by deliberately breaking the code, and the app has been run end to end in a real browser. The full account of what was built, decided and found along the way is in [docs/DEVLOG.md](docs/DEVLOG.md).
 
 ```
 kuccps/
@@ -56,12 +56,11 @@ The tool is only as good as its data and assumptions. These are the ones to conf
 
 - Accounts, saved classes, or a school-level database. Class analysis is deliberately stateless: marks are analysed and forgotten. Storing learner data would need a data-protection design first.
 - A server-generated PDF. The report uses the browser's print function (Save as PDF), which needs nothing extra on the server.
-- Deployment. There is no GitHub repository, server or address yet. The usual route (build the front end, serve it and forward `/api` to gunicorn) follows the sibling projects.
 
 ## Where it lives
 
 | | Folder | GitHub repository | Server | Address |
 |---|---|---|---|---|
-| Whole project | this folder | `leonawiti/kuccps` (private) | not set up | not set up |
+| Whole project | this folder | `leonawiti/kuccps` (private) | the shared VPS (`/var/www/kuccps-api`, `/var/www/kuccps`) | https://kuccps.epicbizintel.com |
 
-The code is on GitHub (`main`). There is no server or address yet.
+The code is on GitHub (`main`) and deploys itself to the server on every push; how that works, and what is on the server, is in [docs/deploy.md](docs/deploy.md).

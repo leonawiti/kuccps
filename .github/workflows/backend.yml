@@ -1,0 +1,82 @@
+name: Backend - test and deploy
+
+# Runs the checks and the tests when anything in backend/ changes. On a push to main, if they pass, the code is
+# copied to the server and the service is restarted. There is no database to migrate. The server holds no GitHub token.
+
+on:
+  push:
+    branches: [main]
+    paths: ['backend/**', '.github/workflows/backend.yml']
+  pull_request:
+    paths: ['backend/**', '.github/workflows/backend.yml']
+  workflow_dispatch: # also lets you run it by hand from the Actions tab
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-kuccps-api
+  cancel-in-progress: false # never stop a deploy halfway
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: backend/requirements*.txt
+
+      # The dev requirements add openpyxl, which the catalogue-builder tests need. The server does not install them.
+      - run: pip install -r requirements.txt -r requirements-dev.txt
+        working-directory: backend
+      - run: python manage.py check
+        working-directory: backend
+        env:
+          SECRET_KEY: ci-only-throwaway-key # the check refuses to run without one; this never leaves the test machine
+      - run: python manage.py test
+        working-directory: backend
+
+  deploy:
+    needs: test # a failing test stops the deploy
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up SSH
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      # No --delete: the server's own venv/ must never be removed. Tests and the dev-only requirements stay behind.
+      - name: Copy the code to the server
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          rsync -az \
+            --exclude '.git/' --exclude '.github/' --exclude 'venv/' --exclude '__pycache__/' \
+            --exclude 'db.sqlite3' --exclude '.env*' --exclude 'test_*.py' --exclude 'requirements-dev.txt' \
+            -e "ssh -i $HOME/.ssh/deploy_key -o StrictHostKeyChecking=yes" \
+            backend/ "$DEPLOY_USER@$DEPLOY_HOST:/var/www/kuccps-api/"
+
+      - name: Install and restart
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          ssh -i "$HOME/.ssh/deploy_key" -o StrictHostKeyChecking=yes \
+            "$DEPLOY_USER@$DEPLOY_HOST" 'bash /var/www/kuccps-api/deploy/release.sh'
+
+      - name: Remove the key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
